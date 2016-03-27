@@ -1,0 +1,11 @@
+[Unit]
+Description=Intel QuickAssist Acceleration Driver Framework
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/adf_ctl up
+ExecStop=/sbin/adf_ctl down
+
+[Install]
+WantedBy=network.target

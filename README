@@ -1,0 +1,7 @@
+This installation currently works only for the Intel Atom C2000 (Rangeley) Platform.
+
+To build, CD to the "quickassist" directory and run make.
+To install: make install
+
+Requires gcc, libssl-dev, zlib1g-dev, linux-headers, systemd
+

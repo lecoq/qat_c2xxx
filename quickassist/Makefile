@@ -59,6 +59,14 @@
 #  version: QAT1.5.L.1.11.0-36
 ################################################################
 
+export ICP_ROOT=/QAT
+export ICP_BUILD_OUTPUT=$(ICP_ROOT)/build
+export ICP_BUILDSYSTEM_PATH=$(ICP_ROOT)/quickassist/build_system/
+export ICP_TOOLS_TARGET="accelcomp"
+export ICP_ENV_DIR=$(ICP_ROOT)/quickassist/build_system/build_files/env_files
+export ICP_NONBLOCKING_PARTIALS_PERFORM=1
+export KERNEL_SOURCE_ROOT=/usr/src/linux-headers-`uname -r`
+
 PATH_TO_FILE=/lib64 /lib /lib64/* /lib/* /usr /usr/*
 KERNEL_HEADER_FILE_LIST=$(sort $(shell cat $(ICP_BUILD_OUTPUT)/kernel_header_file_list.txt))
 KERNEL_HEADER_FILE_PATH=$(strip $(KERNEL_SOURCE_ROOT))/include/linux 
@@ -114,18 +122,43 @@ ALL_TARGETS += libosalvf adfvf lacvf libosal_uservf
 endif
 
 all: $(ALL_TARGETS)
+	@touch lookaside/firmware/icp_qat_ae.uof
+	@touch lookaside/firmware/icp_qat_pke.mof
 	@echo 'Build Done';
 
 all_ci: $(ALL_TARGETS_CI)
 	@echo 'Build Done';
+
+install:
+	@install -m 0644 $(ICP_BUILD_OUTPUT)/*.bin /lib/firmware
+	@install -m 0644 $(ICP_BUILD_OUTPUT)/*.ko /lib/modules/`uname -r`/kernel/drivers/crypto
+	@install -m 0755 $(ICP_BUILD_OUTPUT)/adf_ctl /sbin
+	@install -m 0644 $(ICP_BUILD_OUTPUT)/*.a /usr/lib
+	@install -m 0755 $(ICP_BUILD_OUTPUT)/*.so /usr/lib
+	@ldconfig
+	@depmod -a
+	@echo "sha256" > /lib/modules-load.d/quickassist.conf
+	@echo "sha512" >> /lib/modules-load.d/quickassist.conf
+	@echo "icp_qa_al" >> /lib/modules-load.d/quickassist.conf
+	@echo 'KERNEL=="icp_adf_ctl" MODE="0600"' > /lib/udev/rules.d/80-c2xxx_qa.rules
+	@echo 'KERNEL=="icp_dev[0-9]*" MODE="0600"' >> /lib/udev/rules.d/80-c2xxx_qa.rules
+	@echo 'KERNEL=="icp_dev_mem?" MODE="0600"' >> /lib/udev/rules.d/80-c2xxx_qa.rules
+	@udevadm control --reload-rules
+	@udevadm trigger
+	@install -m 0644 $(ICP_BUILD_OUTPUT)/c2xxx_qa_dev0.conf /etc
+	@install -m 0644 $(ICP_BUILD_OUTPUT)/quickassist.service /lib/systemd/system
+	@systemctl daemon-reload
+	@modprobe icp_qa_al
+	@sleep 2
+	@systemctl start quickassist
+
 
 user: lac_lib_dir libosal_user adf_user lac_user
 kernel: lac_lib_dir libosal hal adf lac qat-fw install_scripts
 
 install_scripts:
 	@echo ; echo 'Copying Install Scripts';
-	@cp $(ICP_BUILDSYSTEM_PATH)/build_files/qat_service $(ICP_BUILD_OUTPUT)/;
-	@chmod 750 $(ICP_BUILD_OUTPUT)/qat_service;
+	@cp $(ICP_BUILDSYSTEM_PATH)/build_files/quickassist.service $(ICP_BUILD_OUTPUT)/;
 	@cp $(CONFIG_PATH)/dh89xxcc_qa_dev0.conf $(ICP_BUILD_OUTPUT)/;
 	@cp $(CONFIG_PATH)/dh89xxcc_qa_dev1.conf $(ICP_BUILD_OUTPUT)/;
 	@cp $(CONFIG_PATH)/dh89xxcc_qa_dev0_single_accel.conf $(ICP_BUILD_OUTPUT)/;
