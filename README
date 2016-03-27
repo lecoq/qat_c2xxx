@@ -1,6 +1,12 @@
-This installation currently works only for the Intel Atom C2000 (Rangeley) Platform.
+This version currently works only for the Intel Atom C2000 (Rangeley) Platform, using Ubuntu 16.04 (Xenial)
 
-To build, CD to the "quickassist" directory and run make.
+To build:
+mkdir /QAT
+git clone https://github.com/lecoq/quickassist
+mv quickassist /QAT
+cd /QAT
+make
+
 To install: make install
 
 Requires gcc, libssl-dev, zlib1g-dev, linux-headers, systemd
