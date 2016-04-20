@@ -114,7 +114,7 @@ LAC_LIB_DIR=$(LAC_PATH)/build/libs
 export DRBG_POLL_AND_WAIT=1
 #Release Package build steps
 ALL_TARGETS =  clean lac_lib_dir libosal libosal_user hal adf adf_user lac lac_user qat-fw install_scripts
-ALL_TARGETS_CI =  lac_lib_dir lac_ci lac_user_ci qat-fw install_scripts
+ALL_TARGETS_CI = lac_lib_dir lac_ci lac_user_ci qat-fw install_scripts
 ICP_ARCH_USER?=`uname -m`
 
 ifdef ICP_SRIOV
@@ -122,8 +122,6 @@ ALL_TARGETS += libosalvf adfvf lacvf libosal_uservf
 endif
 
 all: $(ALL_TARGETS)
-	@touch lookaside/firmware/icp_qat_ae.uof
-	@touch lookaside/firmware/icp_qat_pke.mof
 	@echo 'Build Done';
 
 all_ci: $(ALL_TARGETS_CI)
@@ -150,6 +148,7 @@ install:
 	@systemctl daemon-reload
 	@modprobe icp_qa_al
 	@sleep 2
+	@systemctl enable quickassist
 	@systemctl start quickassist
 
 
@@ -293,6 +292,9 @@ clean:
 	@echo ; echo 'Cleaning Binaries in Output Dir';
 	@rm -rf $(ICP_BUILD_OUTPUT);
 	@rm -rf $(LAC_LIB_DIR);
+	@cd /QAT
+	@find -type f -name "*.cmd" | xargs rm -f
+	@find -type f -name "*.o" | xargs rm -f
 	@echo 'Cleaning done';
 
 clean_ci:

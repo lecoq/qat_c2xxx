@@ -132,13 +132,23 @@ static int adf_debug_show(struct seq_file *sfile, void *v)
 {
         debug_file_info_t* file_info = sfile->private;
         if (file_info && file_info->seq_read && file_info->page) {
-                int old_offset = file_info->offset;
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0))
+                int ret = 0, old_offset = file_info->offset;
+#else
+		int old_offset = file_info->offset;
+#endif
                 file_info->offset =
                                    file_info->seq_read(file_info->private_data,
                                    file_info->page, PAGE_SIZE - 1,
                                    file_info->offset);
-                seq_puts(sfile, (char*)file_info->page);
-                if (seq_has_overflowed(sfile)) {
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0))
+                ret = seq_puts(sfile, (char*)file_info->page);
+                if (ret) {
+#else
+		seq_puts(sfile, (char*)file_info->page);
+		if (seq_has_overflowed(sfile)) {
+#endif
                         /* run out of space - need to reprint */
                         file_info->offset = old_offset;
                 }

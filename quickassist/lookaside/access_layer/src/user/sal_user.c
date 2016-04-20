@@ -131,7 +131,7 @@ CpaStatus icp_sal_userStartMultiProcess(const char *pProcessName,
         }
         strncpy(tmpName, DEV_LIMIT_CFG_ACCESS_TMPL,
                                        ADF_CFG_MAX_SECTION_LEN_IN_BYTES);
-        strncat(tmpName, pProcessName, ADF_CFG_MAX_SECTION_LEN_IN_BYTES);
+        strncat(tmpName, pProcessName, ADF_CFG_MAX_SECTION_LEN_IN_BYTES - strlen(tmpName) - 1);
     }
     else
     {
