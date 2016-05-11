@@ -276,7 +276,7 @@ clean:
 	@echo ; echo 'Cleaning Binaries in Output Dir';
 	@rm -rf $(ICP_BUILD_OUTPUT);
 	@rm -rf $(LAC_LIB_DIR);
-	@cd /QAT
+	@cd $(ICP_ROOT);
 	@find -type f -name "*.cmd" | xargs rm -f
 	@find -type f -name "*.o" | xargs rm -f
 	@echo 'Cleaning done';
