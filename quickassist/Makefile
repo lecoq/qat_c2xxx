@@ -141,7 +141,7 @@ install:
 	@echo 'KERNEL=="icp_dev_mem?" MODE="0600"' >> /lib/udev/rules.d/80-c2xxx_qa.rules
 	@udevadm control --reload-rules
 	@udevadm trigger
-	@install -m 0644 $(CONFIG_PATH) /etc
+	@install -m 0644 $(ICP_BUILD_OUTPUT)/c2xxx_qa_dev0.conf /etc
 	@install -m 0644 $(ICP_BUILDSYSTEM_PATH)/build_files/quickassist.service /lib/systemd/system
 	@systemctl daemon-reload
 	@modprobe icp_qa_al
