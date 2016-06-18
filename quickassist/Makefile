@@ -65,7 +65,7 @@ export ICP_BUILDSYSTEM_PATH=$(ICP_ROOT)/quickassist/build_system/
 export ICP_TOOLS_TARGET="accelcomp"
 export ICP_ENV_DIR=$(ICP_ROOT)/quickassist/build_system/build_files/env_files
 export ICP_NONBLOCKING_PARTIALS_PERFORM=1
-export KERNEL_SOURCE_ROOT=/usr/src/linux-headers-`uname -r`
+export KERNEL_SOURCE_ROOT=/lib/modules/$(shell uname -r)/build
 
 PATH_TO_FILE=/lib64 /lib /lib64/* /lib/* /usr /usr/*
 KERNEL_HEADER_FILE_LIST=$(sort $(shell cat $(ICP_BUILD_OUTPUT)/kernel_header_file_list.txt))
