@@ -133,9 +133,9 @@ install:
 	@install -m 0755 $(ICP_BUILD_OUTPUT)/*.so /usr/lib
 	@ldconfig
 	@depmod -a
-	@echo "sha256" > /lib/modules-load.d/quickassist.conf
-	@echo "sha512" >> /lib/modules-load.d/quickassist.conf
-	@echo "icp_qa_al" >> /lib/modules-load.d/quickassist.conf
+	@echo "sha256" > /etc/modules-load.d/quickassist.conf
+	@echo "sha512" >> /etc/modules-load.d/quickassist.conf
+	@echo "icp_qa_al" >> /etc/modules-load.d/quickassist.conf
 	@echo 'KERNEL=="icp_adf_ctl" MODE="0600"' > /lib/udev/rules.d/80-c2xxx_qa.rules
 	@echo 'KERNEL=="icp_dev[0-9]*" MODE="0600"' >> /lib/udev/rules.d/80-c2xxx_qa.rules
 	@echo 'KERNEL=="icp_dev_mem?" MODE="0600"' >> /lib/udev/rules.d/80-c2xxx_qa.rules
