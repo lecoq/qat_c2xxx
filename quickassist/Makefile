@@ -279,6 +279,7 @@ clean:
 	@cd $(ICP_ROOT);
 	@find -type f -name "*.cmd" | xargs rm -f
 	@find -type f -name "*.o" | xargs rm -f
+	@find -type f -name "Module.symvers" | xargs rm -f
 	@echo 'Cleaning done';
 
 .PHONY: output_dir
