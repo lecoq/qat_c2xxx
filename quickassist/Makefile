@@ -125,9 +125,17 @@ all: $(ALL_TARGETS)
 	@echo 'Build Done';
 
 .PHONY: install
-install:
-	@install -m 0644 $(ICP_BUILD_OUTPUT)/*.bin /lib/firmware
+install: install_kmod install_utils
+	@echo 'Installation complete.';
+
+.PHONY: install_kmod
+install_kmod:
 	@install -m 0644 $(ICP_BUILD_OUTPUT)/*.ko /lib/modules/`uname -r`/kernel/drivers/crypto
+	
+
+.PHONY: install_utils
+install_utils:
+	@install -m 0644 $(ICP_BUILD_OUTPUT)/*.bin /lib/firmware
 	@install -m 0755 $(ICP_BUILD_OUTPUT)/adf_ctl /sbin
 	@install -m 0644 $(ICP_BUILD_OUTPUT)/*.a /usr/lib
 	@install -m 0755 $(ICP_BUILD_OUTPUT)/*.so /usr/lib
@@ -142,7 +150,7 @@ install:
 	@udevadm control --reload-rules
 	@udevadm trigger
 	@install -m 0644 $(ICP_BUILD_OUTPUT)/c2xxx_qa_dev0.conf /etc
-	@install -m 0644 $(ICP_BUILDSYSTEM_PATH)/build_files/quickassist.service /lib/systemd/system
+	@install -m 0644 $(ICP_BUILD_OUTPUT)/quickassist.service /lib/systemd/system
 	@systemctl daemon-reload
 	@modprobe icp_qa_al
 	@sleep 2

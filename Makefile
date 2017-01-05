@@ -11,6 +11,14 @@ kmod:
 clean:
 	$(MAKE) -C quickassist clean
 
-install:
-	$(MAKE) -C quickassist install
+install_utils: all
+	$(MAKE) -C quickassist install_utils
+
+install_kmod:
+	@dkms add $(ICP_ROOT)
+	@dkms autoinstall
+
+install: clean install_kmod install_utils
+	@echo 'Installation complete.'
+
 
